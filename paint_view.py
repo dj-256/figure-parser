@@ -1,9 +1,9 @@
+import numpy as np
 from PySide6.QtCore import Qt, QRectF
 from PySide6.QtGui import QPen, QPainter, QPainterPath, QBrush, QImage
-from PySide6.QtWidgets import QWidget, QApplication, QGraphicsView, QGraphicsScene
+from PySide6.QtWidgets import QGraphicsView, QGraphicsScene
 from skimage.transform import resize
-import numpy as np
-
+from skimage.util import invert
 
 class PaintView(QGraphicsView):
     def __init__(self):
@@ -44,8 +44,12 @@ class PaintView(QGraphicsView):
         # Create a numpy array from the image data
         data = image.bits()
         arr = np.frombuffer(data, np.uint8).reshape((image.height(), image.width(), 4))
-        arr = resize(arr, (28, 28))
+        arr = resize(arr, (28, 28), preserve_range=True)
         # Convert the ARGB format to grayscale and normalize to [0, 1]
         arr = arr[..., 0]  # Select only the alpha channel (grayscale)
+        # arr = invert(arr)
+        arr = 255 - arr.astype(np.uint8)
         print(arr)
+        self.scene().clear()
+        self.update()
         return arr
