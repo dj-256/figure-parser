@@ -1,39 +1,27 @@
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QPen, QPainter, QPainterPath
-from PySide6.QtWidgets import QWidget, QApplication
+from PySide6.QtCore import Qt, QRectF
+from PySide6.QtGui import QPen, QPainter, QPainterPath, QBrush, QImage
+from PySide6.QtWidgets import QWidget, QApplication, QGraphicsView, QGraphicsScene, QPushButton, QVBoxLayout
+import numpy as np
+
+from paint_view import PaintView
 
 
-class PaintWidget(QWidget):
+class Main(QWidget):
     def __init__(self):
         super().__init__()
-        self.path = None
-        self.pen = QPen(Qt.black, 2, Qt.SolidLine)
-
-    def paintEvent(self, event):
-        painter = QPainter(self)
-        painter.setPen(self.pen)
-        if self.path is not None:
-            painter.drawPath(self.path)
-
-    def mousePressEvent(self, event):
-        self.path = QPainterPath()
-        self.path.moveTo(event.position())
-        self.update()
-
-    def mouseMoveEvent(self, event):
-        self.path.lineTo(event.position())
-        self.update()
-
-    def mouseReleaseEvent(self, event):
-        self.path.lineTo(event.position())
-        self.path = None
-        # self.update()
+        layout = QVBoxLayout()
+        view = PaintView()
+        layout.addWidget(view)
+        button = QPushButton('Export')
+        layout.addWidget(button)
+        self.setLayout(layout)
+        button.clicked.connect(view.exportImage)
 
 
 if __name__ == '__main__':
     import sys
 
     app = QApplication(sys.argv)
-    widget = PaintWidget()
-    widget.show()
+    main = Main()
+    main.show()
     sys.exit(app.exec())
