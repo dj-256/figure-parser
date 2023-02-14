@@ -5,6 +5,7 @@ from PySide6.QtWidgets import QGraphicsView, QGraphicsScene
 from skimage.transform import resize
 from skimage.util import invert
 
+
 class PaintView(QGraphicsView):
     def __init__(self):
         super().__init__()
